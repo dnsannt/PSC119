@@ -1,0 +1,48 @@
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">DataTable with minimal features & hover style</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Nama Obat</th>
+                    <th>Stok Obat</th>
+                    <th>Dosis</th>
+                    <th>Tipe</th>
+                    <th>Jenis</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for obat in obats %}
+                  <tr>
+                    <td>{{obat.nama}}</td>
+                    <td>{{obat.stok}} {{obat.type}}</td>
+                    <td>{{obat.dosis}}</td>
+                    <td></td>
+                    <td>{{obat.jenis}}</td>
+                  <tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+            
+          </div>
+          <!-- /.card -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  
+  {% endblock %}

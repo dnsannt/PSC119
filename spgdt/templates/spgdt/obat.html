@@ -1,0 +1,98 @@
+{% load static %}
+<!-- head -->
+{% include 'head.html' %}
+<!-- endhead -->
+<!-- disini navbar nya -->
+{% include 'navbar.html' %}
+<!-- Main Sidebar Container -->
+{% include 'spgdt/sidebar.html' %}
+<!-- Content Wrapper. Contains page content -->
+{% block content %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">SPGDT</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">SPGDT</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+
+  <!-- Disini -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Data Call Center</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Nama Obat</th>
+                    <th>Stok Obat</th>
+                    <th>Dosis</th>
+                    <th>Jenis</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for obat in obats %}
+                  <tr>
+                    <td>{{obat.nama}}</td>
+                    <td>{{obat.stok}}{{obat.type}}</td>
+                    <td>{{obat.dosis}}</td>
+                    <td>{{obat.jenis}}</td>
+                  <tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+
+          </div>
+          <!-- /.card -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- Main content -->
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card">
+
+          </div>
+        </div><!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+</div>
+{% endblock %}
+<!-- /.content-wrapper -->
+
+<!-- footer -->
+{% include 'footer.html' %}
+{% load static %}

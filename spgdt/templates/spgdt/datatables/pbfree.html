@@ -1,0 +1,178 @@
+{% load static %}
+<!-- head -->
+{% include 'head.html' %}
+<!-- endhead -->
+<!-- disini navbar nya -->
+{% include 'navbar.html' %}
+<!-- Main Sidebar Container -->
+{% include 'spgdt/sidebar.html' %}
+<!-- Content Wrapper. Contains page content -->
+{% block content %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h4 class="m-0 text-dark">PENGOBATAN GRATIS</h4>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">PENGOBATAN</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+
+  <!-- Disini -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">All Data</h3>
+            </div>
+            <!-- card  -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="bg-light clearfix">
+                    <form>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label for="inputCity">nama</label>
+                          <input type="text" class="form-control" id="inputCity" placeholder="nama">
+                        </div>
+                        <div class="form-group col-md-2">
+                          <label for="inputState">jk</label>
+                          <select id="inputState" class="form-control">
+                            <option selected>L</option>
+                            <option>P</option>
+                          </select>
+                        </div>
+                        <div class="form-group col-md-2">
+                          <label for="inputCity">td</label>
+                          <input type="text" class="form-control" id="inputCity" placeholder="td">
+                        </div>
+                        <div class="form-group col-md-2">
+                          <label for="inputCity">usia</label>
+                          <input type="text" class="form-control" id="inputCity" placeholder="usia">
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col-md-2">
+                          <label for="inputCity">dx</label>
+                          <select id="inputState" class="form-control">
+                            <option selected>BEROBAT</option>
+                            <option>VAKSINASI</option>
+                            <option>BEROBAT & VAKSINASI</option>
+                          </select>
+                        </div>
+                        <div class="form-group col-md-10">
+                          <label for="inputCity">alamat</label>
+                          <input type="text" class="form-control" id="inputCity" placeholder="alamat">
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col-md-2">
+                          <label for="inputCity">nohp</label>
+                          <input type="text" class="form-control" id="inputCity" placeholder="alamat">
+                        </div>
+                        <div class="form-group col-md-2">
+                          <label for="inputCity">tgl</label>
+                          <input type="text" class="form-control" id="datepicker" placeholder="tgl">
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end  -->
+            <!-- /.card-header -->
+            <!-- content  -->
+            <div class=" card-body">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="bg-light clearfix">
+                  </div>
+                  <table id="pbfree" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                      <tr>
+                        <th>id</th>
+                        <th>nama</th>
+                        <th>jk</th>
+                        <th>td</th>
+                        <td>usia</td>
+                        <td>dx</td>
+                        <td>alamat</td>
+                        <td>nohp</td>
+                        <td>tgl</td>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- end  -->
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- Main content -->
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card">
+
+          </div>
+        </div><!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+</div>
+{% endblock %}
+<!-- /.content-wrapper -->
+
+<!-- footer -->
+{% include 'footer.html' %}
+<script>
+  $(document).ready(function () {
+    var table = $('#pbfree').DataTable({
+      order: [[0, 'desc']],
+      paging: true,
+      "serverSide": true,
+      "ajax": "/api/pbfree/?format=datatables",
+      "columns": [
+        { "data": "id", "searchable": false },
+        { "data": "nama" },
+        { "data": "jk" },
+        { "data": "td" },
+        { "data": "usia" },
+        { "data": "dx" },
+        { "data": "alamat" },
+        { "data": "nohp" },
+        { "data": "tgl" },
+      ]
+    });
+  });
+</script>

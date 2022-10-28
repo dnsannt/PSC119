@@ -1,0 +1,36 @@
+{% load static %}
+<!-- head -->
+{% include 'head.html' %}
+<!-- endhead -->
+<!-- disini navbar nya -->
+{% include 'navbar.html' %}
+<!-- Main Sidebar Container -->
+{% include 'spgdt/sidebar.html' %}
+<!-- Content Wrapper. Contains page content -->
+{% include 'spgdt/datatables/content.html' %}
+<!-- /.content-wrapper -->
+
+<!-- footer -->
+{% include 'footer.html' %}
+<script>
+    $(document).ready(function () {
+        var table = $('#spgdt').DataTable({
+            order: [[0, 'desc']],
+            paging: true,
+            "serverSide": true,
+            "ajax": "/api/spgdt/?format=datatables",
+            "columns": [
+                { "data": "id", "searchable": false },
+                { "data": "nama" },
+                { "data": "notelp" },
+                { "data": "lokasi" },
+                { "data": "kategori" },
+                { "data": "subkategori" },
+                { "data": "detailkategori" },
+                { "data": "keterangan" },
+                { "data": "status" },
+                { "data": "startcall" },
+            ]
+        });
+    });
+</script>

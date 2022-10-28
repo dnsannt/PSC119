@@ -1,0 +1,532 @@
+{% load static %}
+<!-- head -->
+{% include 'head.html' %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- endhead -->
+<!-- disini navbar nya -->
+{% include 'navbar.html' %}
+<!-- Main Sidebar Container -->
+{% include 'spgdt/sidebar.html' %}
+<!-- Content Wrapper. Contains page content -->
+{% block content %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">PUBLIC SAFETY CENTER 119</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">ALL DATA GIAT</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+
+  <!-- Disini -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Dashboard</h3>
+            </div>
+            <div class="row">
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                  <div class="inner">
+                    <h3>{{pbfrees_count}}</h3>
+                    <p>Pengobatan Gratis</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                  </div>
+                  <a href="{% url 'pb' %}" class="small-box-footer">More info <i
+                      class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                  <div class="inner">
+                    <h3>{{giats_count}}</sup></h3>
+                    <p>Kegiatan : januari - desember</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                  </div>
+                  <a href="{% url 'giat' %}" class="small-box-footer">More info <i
+                      class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                  <div class="inner">
+                    <h3>{{telps_count}}</h3>
+
+                    <p>Layanan Call Center</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                  </div>
+                  <a href="{% url 'spgdt' %}" class="small-box-footer">More info <i
+                      class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                  <div class="inner">
+                    <h3>{{video_count}}</h3>
+
+                    <p>Video Kegiatan</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                  </div>
+                  <a href="{% url 'video-giat'%}" class="small-box-footer">More info <i
+                      class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <!-- ./col -->
+            </div>
+
+            <!-- Styles -->
+            <style>
+              #chartdiv {
+                width: 100%;
+                height: 300px;
+              }
+            </style>
+
+            <!-- Resources -->
+            <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+            <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+            <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+            <!-- CHART2  -->
+            <!-- Styles -->
+            <style>
+              #chartdiv3 {
+                width: 100%;
+                height: 300px;
+              }
+            </style>
+            <!-- Chart code -->
+            <script>
+              // var base_url = ${base_url}
+              // alert(base_url);
+              am4core.ready(function () {
+
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                var chart = am4core.create('chartdiv3', am4charts.XYChart)
+                chart.colors.step = 2;
+
+                chart.legend = new am4charts.Legend()
+                chart.legend.position = 'bottom'
+                chart.legend.paddingBottom = 20
+                chart.legend.labels.template.maxWidth = 95
+
+                var xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
+                xAxis.dataFields.category = 'category'
+                xAxis.renderer.cellStartLocation = 0.1
+                xAxis.renderer.cellEndLocation = 0.9
+                xAxis.renderer.grid.template.location = 0;
+
+                var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                yAxis.min = 0;
+
+                function createSeries(value, name) {
+                  var series = chart.series.push(new am4charts.ColumnSeries())
+                  series.dataFields.valueY = value
+                  series.dataFields.categoryX = 'category'
+                  series.name = name
+
+                  series.events.on("hidden", arrangeColumns);
+                  series.events.on("shown", arrangeColumns);
+
+                  series.tooltipText = "{name} {categoryX} : {valueY} (penelpon)";
+
+                  chart.cursor = new am4charts.XYCursor();
+                  chart.cursor.lineY.disabled = true;
+                  chart.cursor.lineX.disabled = true;
+
+                  return series;
+                }
+
+                function fetchDataChart() {
+                  axios
+                    .get(`http://127.0.0.1:8000/get-telp/`)
+                    .then(res => {
+                      if (res) {
+                        let tmpList = []
+                        res.data.data.map(post => {
+                          tmpList.push({
+                            'category': post.startcall,
+                            'kategori': parseFloat(parseFloat(post.total_kategori)),
+                            // 'vaksin': parseFloat(parseFloat(post.total_vaksin)),
+                            // 'berobat_vaksin': parseFloat(parseFloat(post.total_berobat_vaksin)),
+                            // 'berobat_vaksin': parseFloat(parseFloat(post.pembiayaan).toFixed(2)),
+                          })
+                        })
+                        tableData = tmpList;
+                        chart.data = tmpList;
+                        console.log('fetchdata res  is >>>>', tmpList);
+                      }
+                    })
+                    .catch(error => {
+                      this.error = true
+                    })
+                    .finally(() => this.isLoading = false)
+                }
+
+                fetchDataChart();
+
+                createSeries('kategori', 'CallCenter');
+                // createSeries('vaksin', 'VAKSIN');
+                // createSeries('berobat_vaksin', 'BEROBAT & VAKSIN');
+
+                function arrangeColumns() {
+
+                  var series = chart.series.getIndex(0);
+
+                  var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
+                  if (series.dataItems.length > 1) {
+                    var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
+                    var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
+                    var delta = ((x1 - x0) / chart.series.length) * w;
+                    if (am4core.isNumber(delta)) {
+                      var middle = chart.series.length / 2;
+
+                      var newIndex = 0;
+                      chart.series.each(function (series) {
+                        if (!series.isHidden && !series.isHiding) {
+                          series.dummyData = newIndex;
+                          newIndex++;
+                        }
+                        else {
+                          series.dummyData = chart.series.indexOf(series);
+                        }
+                      })
+                      var visibleCount = newIndex;
+                      var newMiddle = visibleCount / 2;
+
+                      chart.series.each(function (series) {
+                        var trueIndex = chart.series.indexOf(series);
+                        var newIndex = series.dummyData;
+
+                        var dx = (newIndex - trueIndex + middle - newMiddle) * delta
+
+                        series.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+                        series.bulletsContainer.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+                      })
+                    }
+                  }
+                }
+
+              }); // end am4core.ready()
+            </script>
+            <h4 style="text-align:center;">Layanan Call Center </h4>
+            <!-- HTML -->
+            <div id="chartdiv3"></div>
+            <!-- END  -->
+
+            <!-- CHART2  -->
+            <!-- Styles -->
+            <style>
+              #chartdiv2 {
+                width: 100%;
+                height: 300px;
+              }
+            </style>
+            <!-- Chart code -->
+            <script>
+              // var base_url = ${base_url}
+              // alert(base_url);
+              am4core.ready(function () {
+
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                var chart = am4core.create('chartdiv2', am4charts.XYChart)
+                chart.colors.step = 2;
+
+                chart.legend = new am4charts.Legend()
+                chart.legend.position = 'bottom'
+                chart.legend.paddingBottom = 20
+                chart.legend.labels.template.maxWidth = 95
+
+                var xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
+                xAxis.dataFields.category = 'category'
+                xAxis.renderer.cellStartLocation = 0.1
+                xAxis.renderer.cellEndLocation = 0.9
+                xAxis.renderer.grid.template.location = 0;
+
+                var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                yAxis.min = 0;
+
+                function createSeries(value, name) {
+                  var series = chart.series.push(new am4charts.ColumnSeries())
+                  series.dataFields.valueY = value
+                  series.dataFields.categoryX = 'category'
+                  series.name = name
+
+                  series.events.on("hidden", arrangeColumns);
+                  series.events.on("shown", arrangeColumns);
+
+                  series.tooltipText = "{name} {categoryX} : {valueY} (KEGIATAN)";
+
+                  chart.cursor = new am4charts.XYCursor();
+                  chart.cursor.lineY.disabled = true;
+                  chart.cursor.lineX.disabled = true;
+
+                  return series;
+                }
+
+                function fetchDataChart() {
+                  axios
+                    .get(`http://127.0.0.1:8000/get-giat/`)
+                    .then(res => {
+                      if (res) {
+                        let tmpList = []
+                        res.data.data.map(post => {
+                          tmpList.push({
+                            'category': post.bulan,
+                            'keterangan': parseFloat(parseFloat(post.total_keterangan)),
+                            // 'vaksin': parseFloat(parseFloat(post.total_vaksin)),
+                            // 'berobat_vaksin': parseFloat(parseFloat(post.total_berobat_vaksin)),
+                            // 'berobat_vaksin': parseFloat(parseFloat(post.pembiayaan).toFixed(2)),
+                          })
+                        })
+                        tableData = tmpList;
+                        chart.data = tmpList;
+                        console.log('fetchdata res  is >>>>', tmpList);
+                      }
+                    })
+                    .catch(error => {
+                      this.error = true
+                    })
+                    .finally(() => this.isLoading = false)
+                }
+
+                fetchDataChart();
+
+                createSeries('keterangan', 'KETERANGAN');
+                // createSeries('vaksin', 'VAKSIN');
+                // createSeries('berobat_vaksin', 'BEROBAT & VAKSIN');
+
+                function arrangeColumns() {
+
+                  var series = chart.series.getIndex(0);
+
+                  var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
+                  if (series.dataItems.length > 1) {
+                    var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
+                    var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
+                    var delta = ((x1 - x0) / chart.series.length) * w;
+                    if (am4core.isNumber(delta)) {
+                      var middle = chart.series.length / 2;
+
+                      var newIndex = 0;
+                      chart.series.each(function (series) {
+                        if (!series.isHidden && !series.isHiding) {
+                          series.dummyData = newIndex;
+                          newIndex++;
+                        }
+                        else {
+                          series.dummyData = chart.series.indexOf(series);
+                        }
+                      })
+                      var visibleCount = newIndex;
+                      var newMiddle = visibleCount / 2;
+
+                      chart.series.each(function (series) {
+                        var trueIndex = chart.series.indexOf(series);
+                        var newIndex = series.dummyData;
+
+                        var dx = (newIndex - trueIndex + middle - newMiddle) * delta
+
+                        series.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+                        series.bulletsContainer.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+                      })
+                    }
+                  }
+                }
+
+              }); // end am4core.ready()
+            </script>
+            <h4 style="text-align:center;">Kegiatan PSC </h4>
+            <!-- HTML -->
+            <div id="chartdiv2"></div>
+            <!-- END  -->
+
+            <!-- Chart code -->
+            <script>
+              // var base_url = ${base_url}
+              // alert(base_url);
+              am4core.ready(function () {
+
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                var chart = am4core.create('chartdiv', am4charts.XYChart)
+                chart.colors.step = 2;
+
+                chart.legend = new am4charts.Legend()
+                chart.legend.position = 'bottom'
+                chart.legend.paddingBottom = 20
+                chart.legend.labels.template.maxWidth = 95
+
+                var xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
+                xAxis.dataFields.category = 'category'
+                xAxis.renderer.cellStartLocation = 0.1
+                xAxis.renderer.cellEndLocation = 0.9
+                xAxis.renderer.grid.template.location = 0;
+
+                var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                yAxis.min = 0;
+
+                function createSeries(value, name) {
+                  var series = chart.series.push(new am4charts.ColumnSeries())
+                  series.dataFields.valueY = value
+                  series.dataFields.categoryX = 'category'
+                  series.name = name
+
+                  series.events.on("hidden", arrangeColumns);
+                  series.events.on("shown", arrangeColumns);
+
+                  series.tooltipText = "{name} {categoryX} : {valueY} (Orang)";
+
+                  chart.cursor = new am4charts.XYCursor();
+                  chart.cursor.lineY.disabled = true;
+                  chart.cursor.lineX.disabled = true;
+
+                  return series;
+                }
+
+                function fetchDataChart() {
+                  axios
+                    .get(`http://127.0.0.1:8000/get-pb/`)
+                    .then(res => {
+                      if (res) {
+                        let tmpList = []
+                        res.data.data.map(post => {
+                          tmpList.push({
+                            'category': post.bulan,
+                            'berobat': parseFloat(parseFloat(post.total_berobat)),
+                            'vaksin': parseFloat(parseFloat(post.total_vaksin)),
+                            'berobat_vaksin': parseFloat(parseFloat(post.total_berobat_vaksin)),
+                            // 'berobat_vaksin': parseFloat(parseFloat(post.pembiayaan).toFixed(2)),
+                          })
+                        })
+                        tableData = tmpList;
+                        chart.data = tmpList;
+                        console.log('fetchdata res  is >>>>', tmpList);
+                      }
+                    })
+                    .catch(error => {
+                      this.error = true
+                    })
+                    .finally(() => this.isLoading = false)
+                }
+
+                fetchDataChart();
+
+                createSeries('berobat', 'BEROBAT');
+                createSeries('vaksin', 'VAKSIN');
+                createSeries('berobat_vaksin', 'BEROBAT & VAKSIN');
+
+                function arrangeColumns() {
+
+                  var series = chart.series.getIndex(0);
+
+                  var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
+                  if (series.dataItems.length > 1) {
+                    var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
+                    var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
+                    var delta = ((x1 - x0) / chart.series.length) * w;
+                    if (am4core.isNumber(delta)) {
+                      var middle = chart.series.length / 2;
+
+                      var newIndex = 0;
+                      chart.series.each(function (series) {
+                        if (!series.isHidden && !series.isHiding) {
+                          series.dummyData = newIndex;
+                          newIndex++;
+                        }
+                        else {
+                          series.dummyData = chart.series.indexOf(series);
+                        }
+                      })
+                      var visibleCount = newIndex;
+                      var newMiddle = visibleCount / 2;
+
+                      chart.series.each(function (series) {
+                        var trueIndex = chart.series.indexOf(series);
+                        var newIndex = series.dummyData;
+
+                        var dx = (newIndex - trueIndex + middle - newMiddle) * delta
+
+                        series.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+                        series.bulletsContainer.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+                      })
+                    }
+                  }
+                }
+
+              }); // end am4core.ready()
+            </script>
+            <h4 style="text-align:center;">Pengobatan gratis </h4>
+            <!-- HTML -->
+            <div id="chartdiv"></div>
+            <!-- /.card -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- Main content -->
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card">
+
+          </div>
+        </div><!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+</div>
+{% endblock %}
+<!-- /.content-wrapper -->
+
+<!-- footer -->
+{% include 'footer.html' %}
